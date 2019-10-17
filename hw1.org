@@ -144,3 +144,46 @@ For an utility function $u=\alpha x^\beta$, $\alpha > 0,
 
 3. Combining the results in the Theory Recap secion, we have
    \[ \frac{\xi}{\alpha} = w_+ - (w_+-w_-)p_- - \left(w_+^\beta - (w_+^\beta - w_-^\beta) p_-\right)^{1/\beta} \]
+
+* Question 3
+
+1. The prospect is identical to that of Question 1, part (a)
+   | $w_-$, $ | $w_+$, $ | $p_-$ | $\mathfrac{E}[P]$, $ | $\mathfrac{V}[P]$, $ | $\Xi$, $ |
+   | /        |          |       |                      |                      | <        |
+   |----------+----------+-------+----------------------+----------------------+----------|
+   | 50       |      650 |  0.75 |                200.0 |              67500.0 | 136.35   |
+   #+TBLFM: $4='(org-sbe "prospect_mean" (wm $1) (wp $2) (pm $3))::$5='(org-sbe "prospect_var" (wm $1) (wp $2) (pm $3))'::$6='(org-sbe "bet_val" (wm $1) (wp $2) (pm $3))';%.2f
+
+2. Same as in Question 1: no bet larger that $\Xi=136.35$ should be
+   placed on this lottery. The cut-off value does *not* depend on
+   $\alpha$.
+
+3. Omitting further parts of the question which are identical to Question 1
+
+4. We already know that the original lottery is infeasible, for any
+   value of $\alpha>0$.  Hedging: For the alternative lottery, the
+   payoffs for both states of the world at $t=1$ are given in the
+   table below
+
+   | time                           | t=0 | t=1; low oil | t=1; high oil |
+   | /                              |   < |              |               |
+   |--------------------------------+-----+--------------+---------------|
+   | oil stock price, $             |  10 |         2.50 |         32.50 |
+   | plastics stock price, $        |   5 |        25.00 |             1 |
+   | nr. oil shares                 |  10 |           10 |            10 |
+   | nr. plastics shares            |  20 |           20 |            20 |
+   |--------------------------------+-----+--------------+---------------|
+   | total value, oil stock, $      | 100 |        25.00 |        325.00 |
+   | total value, plastics stock, $ | 100 |       500.00 |         20.00 |
+   |--------------------------------+-----+--------------+---------------|
+   | total payout                   |     |       525.00 |        345.00 |
+   #+TBLFM: @5$2=@7$2/@3$2::@6$2=@8$2/@4$2::@7$3=@3$3*@5$3;%.2f::@8$3=@4$3*@6$3;%.2f::@>$3=vsum(@II..@III);%.2f::@7$4=@3$4*@5$4;%.2f::@8$4=@4$4*@6$4;%.2f::@>$4=vsum(@II..@III);%.2f
+
+   The prospect corresponding to this alternative lottery is therefore
+   | $w_-$, $ | $w_+$, $ | $p_-$ | $\mathfrac{E}[P]$, $ | $\Xi$, $ |
+   | /        |          |       |                      | <        |
+   |----------+----------+-------+----------------------+----------|
+   | 345      |      525 |  0.25 |                480.0 | 476.47   |
+   #+TBLFM: $4='(org-sbe "prospect_mean" (wm $1) (wp $2) (pm $3))::$5='(org-sbe "bet_val" (wm $1) (wp $2) (pm $3))';%.2f
+
+   We see that it is feasible to bet any amount on this lottery up to $\Xi=476.47$, so the bet of $200 is certainly feasible.
