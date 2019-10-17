@@ -1,0 +1,146 @@
+#+STARTUP: indent
+#+OPTIONS: toc:nil num:nil
+#+TITLE: ECON 384 HW1
+#+SETUPFILE: my_heading.org
+
+#+LATEX: \linespread{1.5}
+
+* Theory Recap
+For a standard prospect $P=(w_-,w_+;p_-,p_+)$, the following hold:
+- mean payoff: $\mathfrac{E}[P] = w_-p_- + w_+p_+ =: w$
+  #+NAME: prospect_mean
+  #+BEGIN_SRC python :exports none :var wm=0 :var wp=1 :var pm=0.75
+  return wm*pm + wp*(1-pm)
+  #+END_SRC
+- Variance: since $p_-+p_-=1$,
+          \[ \mathfrac{V}[P] = \mathfrac{E}[P^2] - \mathfrac{E}^2[P]
+                             = w_-^2p_- + w_+^2p_+ - (w_-p_-+w_+p_+)^2
+                             = p_-p_+(w_-^2+w_+^2)-2p_-p_+w_-w_+
+                             = p_-p_+(w_+-w_-)^2
+            \]
+  #+NAME: prospect_var
+  #+BEGIN_SRC python :exports none :var wm=0 :var wp=1 :var pm=0.75
+  return pm*(1-pm)*(wp-wm)*(wp-wm)
+  #+END_SRC
+
+For an utility function $u=\alpha x^\beta$, $\alpha > 0,
+\beta\in(0,1)$, the following hold:
+- $u$ is strictly concave on $x\in(0,+\infty)$: $u'' =
+  \alpha\beta(\beta-1)x^{\beta-2}<0$ if $\beta<1$
+- A surety with the expected value $w$ matching that of the prospect
+  has utility $v := u(w) = \alpha w^\beta = \alpha \left(w_-p_- + w_+p_+\right)^\beta$
+- Jensen's inequality holds:
+    \[ s := \mathfrac{E}[u(P)] = u(w_-)p_- + u(w_+)p_+
+               = \alpha (w_-^\beta p_- + w_+^\beta p_+) < v := u(\mathfrac{E}(P)) = \alpha \left(w_-p_- + w_+p_+\right)^\beta
+    \]
+- The risk premium $\xi$ is given by
+  $\frac{\xi}{\alpha} := w - u^{-1}(s) =  w_-p_- + w_+p_+ - \Xi$ \\
+  where $\Xi := (w_-^\beta p_- + w_+^\beta p_+)^{\frac{1}{\beta}}$
+  - Jensen's inequality is equivalent to $\xi>0$
+- A bet $\Upsilon$ should *not* be placed on the prospect if the utility
+  of surety of $\Upsilon$ exceeds the expected utility of the prospect:
+  $u(\Upsilon) > s$, i.e. $\Upsilon^\beta > w_-^\beta p_- + w_+^\beta p_+ = w_+^\beta - (w_+^\beta - w_-^\beta) p_-$
+  - Note that the decision whether to place a bet or not *does not
+    depend on $\alpha$*; In this particular example $\alpha$
+    "cancels out"; but more generally the preference semi-ordering
+    induced by a utility function does not change with scaling the
+    function values. This is intuitively clear --- since the utility
+    values are not directly observable any theory based on behaviour
+    of the utility function must allow for e.g. changing the unit of
+    measurement from e.g. 'utils' to 'kilo-utils' without changing the
+    predictions about preferences.
+  - Also note that by Jensen's inequality, $\beta\in(0,1)$ corresponds
+    to a *risk-averse* actor: a wager equal to the expected value of
+    the prospect will always be eschewed. Conversely, an insurance at
+    actuarially fair premium will be accepted.
+  - As the illustration shows, the actor will be indifferent between
+    the prospect and placing a bet of amount $\Xi = w - \xi$
+    #+NAME: bet_val
+    #+BEGIN_SRC  python :exports none :var wm=0 :var wp=1 :var pm=0.75 :var beta=0.5
+    return (pm * wm**beta + (1-pm)*wp**beta)**(1/beta)
+    #+END_SRC
+
+    #+NAME: risk_premium
+    #+BEGIN_SRC python :exports none :var wm=0 :var wp=1 :var pm=0.75 :var beta=0.5 :var alpha=1
+    return alpha * ( wm*pm + wp*(1-pm) - (pm * wm**beta + (1-pm)*wp**beta)**(1/beta) )
+    #+END_SRC
+  - Further, the value of maximum acceptable bet $\Upsilon =
+    \left(w_+^\beta - (w_+^\beta - w_-^\beta) p_-\right)^{1/\beta}$ is
+    at most $w_+$, and decreases towards $w_-$ as the probability
+    $p_-$ of the 'downside' increases.
+
+
+* Question 1
+1. Basic descriptive stats: substitute values into the formulae above.
+
+   | $w_-$, $ | $w_+$, $ | $p_-$ | $\mathfrac{E}[P]$, $ | $\mathfrac{V}[P]$, $ | $\Xi$, $ |
+   | /        |          |       |                      |                      | <        |
+   |----------+----------+-------+----------------------+----------------------+----------|
+   | 50       |      650 |  0.75 |                200.0 |              67500.0 | 136.35   |
+   #+TBLFM: $4='(org-sbe "prospect_mean" (wm $1) (wp $2) (pm $3))::$5='(org-sbe "prospect_var" (wm $1) (wp $2) (pm $3))'::$6='(org-sbe "bet_val" (wm $1) (wp $2) (pm $3))';%.2f
+
+2. Risk-aversion: since $\beta=\frac{1}{2}<1$, the bet equal to the
+   expected value of the prospect is to be *rejected*, as indeed any wager of more than $\Xi=136.35$.
+3. See illustration
+4. Plug in the numbers again. Note that the value of $\alpha$ is immaterial
+   | $w_-$, $ | $w_+$, $ | $p_-$ | $\Upsilon$, $ | $\Xi$, $ |
+   | /        |          |       |               | <        |
+   |----------+----------+-------+---------------+----------|
+   | 50       |     1400 |  0.75 |           200 | 214.84   |
+   #+TBLFM: $5='(org-sbe "bet_val" (wm $1) (wp $2) (pm $3))';%.2f
+   Now the bet of $\Upsilon<\Xi$ will have positive expected utility and should be *accepted*.
+5. Again, plug in the numbers. Note that the value of $\alpha$ is
+   relevant here: while it doesn't change the ordering of preferences,
+   it does change the dollar amount the actor places on a unit of
+   utility.
+   | $\alpha$ | $w_-$, $ | $w_+$, $ | $p_-$ | $\mathfrac{E}[P]$, $ | $\Xi$, $ | $\xi$, $ |
+   | /        |          |          |       |                      |          | <        |
+   |----------+----------+----------+-------+----------------------+----------+----------|
+   | 2        |       50 |      650 |  0.75 |                200.0 |   136.35 | 127.29   |
+   #+TBLFM: $5='(org-sbe "prospect_mean" (wm $2) (wp $3) (pm $4))::$6='(org-sbe "bet_val" (wm $2) (wp $3) (pm $4))';%.2f::$7='(org-sbe "risk_premium" (wm $2) (wp $3) (pm $4) (alpha $1))';%.2f
+   Note that the risk premium $\xi = \alpha (w-\Xi) = 2\cdot(200.00-136.35)$, as expected.
+6. Rearranging the formula for $\Upsilon$ as a function of $p_-$, we
+   get that for $p_- \leq
+   \frac{w_+^\beta-\Upsilon^\beta}{w_+^\beta-w_-^\beta}$ the bet
+   should be accepted. For the numerical values in this example, we
+   have
+    #+NAME: pm_max
+    #+BEGIN_SRC python :exports none :var wm=0 :var wp=1 :var bet=0.4 :var beta=0.5
+    return (wp**beta-bet**beta)/(wp**beta-wm**beta)
+    #+END_SRC
+
+   | $w_-$, $ | $w_+$, $ | $\Upsilon$, $ | $p_-$ |
+   | /        |          |               | <     |
+   |----------+----------+---------------+-------|
+   | 50       |      650 |           200 |  0.62 |
+   #+TBLFM: $4='(org-sbe "pm_max" (wm $1) (wp $2) (bet $3));%.2f
+   I.e. at $62\%$ or lower probability of a bad season, the bet
+   becomes feasible.
+
+* Question 2
+1. From the point of view of the insurance company, the prospect is
+   | $w_$, $1k | $w_+$, $1k | $p_-$ | $\mathfrac{E}[P]$, $1k |
+   | /         |            |       | <                      |
+   |-----------+------------+-------+------------------------|
+   | -30       |          0 | 0.125 | -3.75                  |
+   #+TBLFM: $4='(org-sbe "prospect_mean" (wm $1) (wp $2) (pm $3))
+
+   The actuarially fair premium is therefore $3750; $4500 is *not*
+   actuarially fair.
+
+   For Jack, the prospect is
+   | $w_$, $1k | $w_+$, $1k | $p_-$ | $\xi$, $1k |
+   | /         |            |       | <          |
+   |-----------+------------+-------+------------|
+   | 10        |         40 | 0.125 | 10.94      |
+   #+TBLFM: $4='(org-sbe "risk_premium" (wm $1) (wp $2) (pm $3) (alpha $1))';%.2f
+   We see that the risk premium $\xi$ Jack is willing to pay is
+   greater than the demanded insurance premium. He will therefore be
+   willing to purchase insurance at this price.
+
+2. We saw that the risk premium for this prospect under Jack's utility
+   function is $10940. This is the maximum amount he will pay for
+   insurance.
+
+3. Combining the results in the Theory Recap secion, we have
+   \[ \frac{\xi}{\alpha} = w_+ - (w_+-w_-)p_- - \left(w_+^\beta - (w_+^\beta - w_-^\beta) p_-\right)^{1/\beta} \]
