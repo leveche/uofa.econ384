@@ -161,8 +161,8 @@ For an utility function $u=\alpha x^\beta$, $\alpha > 0,
 3. Omitting further parts of the question which are identical to Question 1
 
 4. We already know that the original lottery is infeasible, for any
-   value of $\alpha>0$.  Hedging: For the alternative lottery, the
-   payoffs for both states of the world at $t=1$ are given in the
+   value of $\alpha>0$.  Diversification: For the alternative lottery,
+   the payoffs for both states of the world at $t=1$ are given in the
    table below
 
    | time                           | t=0 | t=1; low oil | t=1; high oil |
@@ -187,3 +187,108 @@ For an utility function $u=\alpha x^\beta$, $\alpha > 0,
    #+TBLFM: $4='(org-sbe "prospect_mean" (wm $1) (wp $2) (pm $3))::$5='(org-sbe "bet_val" (wm $1) (wp $2) (pm $3))';%.2f
 
    We see that it is feasible to bet any amount on this lottery up to $\Xi=476.47$, so the bet of $200 is certainly feasible.
+
+* Question 4
+- The CAPM discont rate $r_i= r_m\beta + r_f(1-\beta)$. For the example
+  at hand, $100\%\cdot r_i= 4\% + 1.8\cdot (12\%-4\%) = 18.4\%$. The
+  discounted payoff in period $t$ is given by $P(t)/r_i^t=P(t)/1.184^t$
+  for $t=0,\ldots6$, and the NPV of the revenue stream under the CAPM
+  rate is given as follows
+  | period            |       0 |     1 |     2 |     3 |     4 |     5 |     6 | NPV    |
+  | /                 |       < |       |       |       |       |       |       | <      |
+  |-------------------+---------+-------+-------+-------+-------+-------+-------+--------|
+  | payoff, $k        |    -200 |    20 |    30 |  40.5 |    50 |  60.5 |  60.5 |        |
+  | discounted payoff | -200.00 | 16.89 | 21.40 | 24.40 | 25.44 | 26.00 | 21.96 | -63.91 |
+  #+TBLFM: @>$2..@>$8=@3/(1.184^@1);%.2f::@>$>=vsum($2..$8);%.2f
+  Since the NPV is negative, the investment should *not* be pursued.
+
+- Recalculate for $\beta=0.20$: $100\%\cdot r_i = 4\% + 0.2\cdot(12\%-4\%) = 5.6\%$, so that
+  | period            |       0 |     1 |     2 |     3 |     4 |     5 |     6 | NPV   |
+  | /                 |       < |       |       |       |       |       |       | <     |
+  |-------------------+---------+-------+-------+-------+-------+-------+-------+-------|
+  | payoff, $k        |    -200 |    20 |    30 |  40.5 |    50 |  60.5 |  60.5 |       |
+  | discounted payoff | -200.00 | 18.94 | 26.90 | 34.39 | 40.21 | 46.07 | 43.63 | 10.14 |
+  #+TBLFM: @>$2..@>$8=@3/(1.056^@1);%.2f::@>$>=vsum($2..$8);%.2f
+  Under the significantly lower CAPM discount rate of $5.6\%$, the NPV
+  of the investment is positive; the investment is feasible.
+
+- The discounted payoff for each period $t$ is given by $w_\pm\delta^t
+  = w_\pm/1.05^t$, its utility is
+  $u(w_\pm/1.05^t)=\sqrt{w_\pm)/1.05^{t/2}$, and the expected utility
+  is therefore $u=\sum_{t=1}^6\,u(w_-\delta^t)p_- + u(w_+\delta^t)p_+ =
+
+
+  | period $t$       | 1 | 2 | 3 | 4 | 5 | 6 |
+  |------------------+---+---+---+---+---+---|
+  | $w_-$, $k        |   |   |   |   |   |   |
+  | $w_+$, $k        |   |   |   |   |   |   |
+  |------------------+---+---+---+---+---+---|
+  | discounted $w_-$ |   |   |   |   |   |   |
+  | discounted $w_+$ |   |   |   |   |   |   |
+
+* Question 5
+- First, eliminate strategy $L$ since it is strictly dominated by
+  $C$. Then, notice that strategy $D$ on the remaining outcomes is
+  strictly dominated by strategy $U$, so is eliminated as well. What
+  remains is a coordination game
+
+  |   | C     | R    |
+  | / | <     |      |
+  |---+-------+------|
+  | U | 12;5  | 7;7  |
+  |---+-------+------|
+  | M | 15;15 | 5;12 |
+  |---+-------+------|
+
+- Clearly a dominated strategy cannot yield a PSNE, and we should only
+  search the reduced game for Nash equilibria. The PSNEs of the
+  coordination game are $(U,R)$ and $(M,C)$: in either of these plays,
+  no player has an incentive to unilaterally change his strategy. On
+  the other hand, a play $(U,C)$ is not a Nash equilibrium since
+  player 2 can unilaterally switch to strategy $R$ and increase his
+  payoff. Similarly, $(M,R)$ is not a PSNE.
+
+- For mixed Nash equilibria, suppose player 1 chooses $U$ with
+  probability $p$, while player 2 chooses $C$ with probability $q$.
+  Then the expected payoffs are $\mathfrac{E}[U] = 12q + 7(1-q)$ and
+  $\mathfrac{E}[M] = 15q + 5(1-q)$ In equilibrium,
+  $\mathfrac{E}[U]=\mathfrac{E}[M]$ so that $q=2/5$. Similarly,
+  $5p+15(1-p)=7p+12(1-p)$, so that $p=3/5$
+
+\newpage
+
+* Question 7
+
+- with $a=40, b=10$: Clearly the strategy where all countries choose
+  the same level of effort $k\in S$ is a PSNE. Indeed, a unilateral
+  increase of effort to level $K>k$ by any single player will only
+  increase that player's cost, thus reducing its payoff by $b(K-k)>0$
+  while keeping the payoff constant for the rest. A unilateral
+  decrease in the effort level to $l<k$ will reduce the payoff for the
+  player by $(a-b)(k-l)>0$, and for everyone else by $a(k-l)>0$. Since
+  no individual unilateral deviation results in a higher payoff, this
+  is an PSNE. Conversely, every strategy with effort levels not all
+  equal is *not* an PSNE: suppose player $i$ is currently expending
+  the more effort that anyone else (if such player cannot be found,
+  then all are contributing equally). Then by decreasing its level of
+  effort by one unit, it will save $b$ effort and thus increase its
+  payoff by $b$.
+- with $a=10, b=40$, the cost of maintaining effort for each
+  individual player outweigh the benefits of reneging, and the only
+  PSNE is all players choosing to contribute nothing. This is PSNE for
+  the same reason as before: unilateral increase of effort only
+  increases costs and brings no benefit. However, any non-zero level
+  of effort by all players is no longer an PSNE: a unilateral decrease
+  in effort from level $k$ to $l<k$ will result in *increase* in
+  payoff by $(b-a)(k-l)$ for the reneging player.
+- For the updated payoff function, any allocation of effort in which
+  there is exactly one player expending maximal allowed effort while
+  everyone else is expending zero is an PSNE: the player expending max
+  effort cannot deviate to a lower level $l$ since it will be
+  penalized by at least $(40-10)(10-l)$. Anyone else cannot increase
+  their effort since they are already receiving maximal payoff when
+  expending nothing. Conversely, any other allocation of effort is
+  *not* PSNE: if no-one is expending maximal effort a player can
+  increase their payoff by starting to do so, if any one player is
+  expending the max effort, all other players should decrease their
+  efforts to zero and increase their payoff by saving expense.
