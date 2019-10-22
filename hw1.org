@@ -68,6 +68,65 @@ For an utility function $u=\alpha x^\beta$, $\alpha > 0,
     \left(w_+^\beta - (w_+^\beta - w_-^\beta) p_-\right)^{1/\beta}$ is
     at most $w_+$, and decreases towards $w_-$ as the probability
     $p_-$ of the 'downside' increases.
+  - Maximum premium the actor would pay to `secure the state $w_+$' is $C := w_+ - \Xi$
+
+** Illustration
+#+begin_src latex :file choice-uncertainty.pdf :packages '(("" "tikz")) :border 1em :results raw
+  % Define block styles
+  \usetikzlibrary{shapes,arrows}
+  \tikzstyle{astate} = [circle, draw, text centered, font=\footnotesize, fill=blue!25]
+  \tikzstyle{rstate} = [circle, draw, text centered, font=\footnotesize, fill=red!25]
+  \tikzset{  guide line/.style={dashed}
+           , important line/.style={solid}
+  }
+  \resizebox{\columnwidth}{!}{
+  \begin{tikzpicture}[yscale=1,xscale=0.5]
+     % Axis
+     \draw [->] (0,0) node [below] {0} -- (0,0) -- (10,0) node [below] {x};
+     \draw [->] (0,0) node [below] {0} -- (0,0) -- (0,3.5) node [right] {u};
+     \node [left] at (-0.2,3.3) {$\texttt{utility}$};
+     \node [right] at (10.7,0.3) {$\texttt{payoff}$, \$};
+     % utility vs payout
+     \draw[domain=0:10,samples=100,smooth,variable=\x,blue] plot ({\x},{sqrt(\x)});
+
+     % two outcomes of the prospect
+     \coordinate (wm) at (1,0);
+     \coordinate (um) at (0,1);
+     \coordinate (wmum) at (1,1);
+     \coordinate (wp) at (9,0);
+     \coordinate (up) at (0,3);
+     \coordinate (wpup) at (9,3);
+
+     \draw [guide line] (wm) node[below] {$w_-$} -- (wmum);
+     \draw [guide line] (wp) node[below] {$w_+$} -- (wpup);
+     \draw [guide line] (um) node[left] {$u_-$} -- (wmum);
+     \draw [guide line] (up) node[left] {$u_+$} -- (wpup);
+
+     % w = 4 corresponds to p_- = 5/8
+     \coordinate (w) at (4,0);
+     \coordinate (s) at (0,2);
+     \coordinate (ws) at (4,2);
+     \coordinate (v)  at (0,7/4);
+     \coordinate (wv) at (4,7/4);
+     \coordinate (Xi) at (49/16,0);
+     \coordinate (Xiv) at (49/16,7/4);
+
+     \draw[guide line] (w) node[below] {$w$} -- (ws);
+     \draw[guide line] (s) node[left]  {$s$} -- (ws);
+
+     \draw [important line] (wmum) -- (wpup);
+
+     \draw [guide line] (v) node[left] {$v$} -- (wv);
+     \draw [guide line] (Xi) node[below] {$\Xi$} -- (Xiv);
+
+     \draw [important line][red,thick] (Xiv) -- (wv) node[above,midway] {$\xi$};
+  \end{tikzpicture}
+  }
+
+#+end_src
+#+CAPTION: risk premium and maximal acceptable bet
+#+LABEL: fig:tikz
+#+RESULTS:
 
 * Question 1
 1. Basic descriptive stats: substitute values into the formulae above.
