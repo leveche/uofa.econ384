@@ -12,7 +12,7 @@ For a standard prospect $P=(w_-,w_+;p_-,p_+)$, the following hold:
   #+BEGIN_SRC python :exports none :var wm=0 :var wp=1 :var pm=0.75
   return wm*pm + wp*(1-pm)
   #+END_SRC
-- Variance: since $p_-+p_-=1$,
+- Variance: since $p_-+p_+=1$,
           \[ \mathfrac{V}[P] = \mathfrac{E}[P^2] - \mathfrac{E}^2[P]
                              = w_-^2p_- + w_+^2p_+ - (w_-p_-+w_+p_+)^2
                              = p_-p_+(w_-^2+w_+^2)-2p_-p_+w_-w_+
@@ -22,6 +22,7 @@ For a standard prospect $P=(w_-,w_+;p_-,p_+)$, the following hold:
   #+BEGIN_SRC python :exports none :var wm=0 :var wp=1 :var pm=0.75
   return pm*(1-pm)*(wp-wm)*(wp-wm)
   #+END_SRC
+
 
 For an utility function $u=\alpha x^\beta$, $\alpha > 0,
 \beta\in(0,1)$, the following hold:
@@ -34,12 +35,11 @@ For an utility function $u=\alpha x^\beta$, $\alpha > 0,
                = \alpha (w_-^\beta p_- + w_+^\beta p_+) < v := u(\mathfrac{E}(P)) = \alpha \left(w_-p_- + w_+p_+\right)^\beta
     \]
 - The risk premium $\xi$ is given by
-  $\frac{\xi}{\alpha} := w - u^{-1}(s) =  w_-p_- + w_+p_+ - \Xi$ \\
-  where $\Xi := (w_-^\beta p_- + w_+^\beta p_+)^{\frac{1}{\beta}}$
+  \[ \xi := w - u^{-1}(s) =  w_-p_- + w_+p_+ - \Xi \]
+  where the *certainty equivalent* is given by
+  \[\Xi^\beta := w_-^\beta p_- + w_+^\beta p_+ =  w_+^\beta - (w_+^\beta - w_-^\beta) p_-\]
   - Jensen's inequality is equivalent to $\xi>0$
-- A bet $\Upsilon$ should *not* be placed on the prospect if the utility
-  of surety of $\Upsilon$ exceeds the expected utility of the prospect:
-  $u(\Upsilon) > s$, i.e. $\Upsilon^\beta > w_-^\beta p_- + w_+^\beta p_+ = w_+^\beta - (w_+^\beta - w_-^\beta) p_-$
+- The maximal bet that should be placed on the prospect is the certainty equivalent $\Xi$.
   - Note that the decision whether to place a bet or not *does not
     depend on $\alpha$*; In this particular example $\alpha$
     "cancels out"; but more generally the preference semi-ordering
@@ -62,13 +62,12 @@ For an utility function $u=\alpha x^\beta$, $\alpha > 0,
 
     #+NAME: risk_premium
     #+BEGIN_SRC python :exports none :var wm=0 :var wp=1 :var pm=0.75 :var beta=0.5 :var alpha=1
-    return alpha * ( wm*pm + wp*(1-pm) - (pm * wm**beta + (1-pm)*wp**beta)**(1/beta) )
+    return ( wm*pm + wp*(1-pm) - (pm * wm**beta + (1-pm)*wp**beta)**(1/beta) )
     #+END_SRC
   - Further, the value of maximum acceptable bet $\Upsilon =
     \left(w_+^\beta - (w_+^\beta - w_-^\beta) p_-\right)^{1/\beta}$ is
     at most $w_+$, and decreases towards $w_-$ as the probability
     $p_-$ of the 'downside' increases.
-
 
 * Question 1
 1. Basic descriptive stats: substitute values into the formulae above.
@@ -89,17 +88,14 @@ For an utility function $u=\alpha x^\beta$, $\alpha > 0,
    | 50       |     1400 |  0.75 |           200 | 214.84   |
    #+TBLFM: $5='(org-sbe "bet_val" (wm $1) (wp $2) (pm $3))';%.2f
    Now the bet of $\Upsilon<\Xi$ will have positive expected utility and should be *accepted*.
-5. Again, plug in the numbers. Note that the value of $\alpha$ is
-   relevant here: while it doesn't change the ordering of preferences,
-   it does change the dollar amount the actor places on a unit of
-   utility.
-   | $\alpha$ | $w_-$, $ | $w_+$, $ | $p_-$ | $\mathfrac{E}[P]$, $ | $\Xi$, $ | $\xi$, $ |
-   | /        |          |          |       |                      |          | <        |
-   |----------+----------+----------+-------+----------------------+----------+----------|
-   | 2        |       50 |      650 |  0.75 |                200.0 |   136.35 | 127.29   |
-   #+TBLFM: $5='(org-sbe "prospect_mean" (wm $2) (wp $3) (pm $4))::$6='(org-sbe "bet_val" (wm $2) (wp $3) (pm $4))';%.2f::$7='(org-sbe "risk_premium" (wm $2) (wp $3) (pm $4) (alpha $1))';%.2f
-   Note that the risk premium $\xi = \alpha (w-\Xi) = 2\cdot(200.00-136.35)$, as expected.
-6. Rearranging the formula for $\Upsilon$ as a function of $p_-$, we
+5. Again, plug in the numbers. Note that the value of $\alpha$ is still not relevant.
+   | $w_-$, $ | $w_+$, $ | $p_-$ | $\mathfrac{E}[P]$, $ | $\Xi$, $ | $\xi$, $ |
+   | /        |          |       |                      |          | <        |
+   |----------+----------+-------+----------------------+----------+----------|
+   | 50       |      650 |  0.75 |                200.0 |   136.35 | 63.65    |
+   #+TBLFM: $4='(org-sbe "prospect_mean" (wm $1) (wp $2) (pm $3))::$5='(org-sbe "bet_val" (wm $1) (wp $2) (pm $3))';%.2f::$6='(org-sbe "risk_premium" (wm $1) (wp $2) (pm $3) (alpha $INVALID))';%.2f
+   Note that the risk premium $\xi = w-\Xi = 200.00-136.35$, as expected.
+6. Rearranging the formula for $\Xi$ as a function of $p_-$, we
    get that for $p_- \leq
    \frac{w_+^\beta-\Upsilon^\beta}{w_+^\beta-w_-^\beta}$ the bet
    should be accepted. For the numerical values in this example, we
@@ -143,7 +139,7 @@ For an utility function $u=\alpha x^\beta$, $\alpha > 0,
    insurance.
 
 3. Combining the results in the Theory Recap secion, we have
-   \[ \frac{\xi}{\alpha} = w_+ - (w_+-w_-)p_- - \left(w_+^\beta - (w_+^\beta - w_-^\beta) p_-\right)^{1/\beta} \]
+   \[ \xi = w_+ - (w_+-w_-)p_- - \left(w_+^\beta - (w_+^\beta - w_-^\beta) p_-\right)^{1/\beta} \]
 
 * Question 3
 
